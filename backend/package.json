@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.0.0",
+    "apollo-datasource-rest": "^3.7.0",
+    "apollo-server": "^3.10.3",
+    "apollo-server-core": "^3.10.3",
+    "dotenv": "^16.0.3",
+    "graphql": "^16.6.0"
+  }
+}
