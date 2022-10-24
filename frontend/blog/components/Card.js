@@ -1,8 +1,14 @@
-import * as React from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import moment from "moment";
+import React, { useState, useCallback } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Button,
+} from "react-native";
 import { useMutation, gql } from "@apollo/client";
-
+import { card, button, fonts, colors, spacing, borders } from "../styles/index";
 const LIKE_POST = gql`
   mutation Mutation($likePostId: Int!) {
     likePost(id: $likePostId)
@@ -10,7 +16,17 @@ const LIKE_POST = gql`
 `;
 
 const Card = (props) => {
-  const { id, title, description, author, likes, createdAt, image } = props;
+  const {
+    id,
+    title,
+    description,
+    author,
+    likes,
+    createdAt,
+    image,
+    index,
+    posts,
+  } = props;
   const [likePost] = useMutation(LIKE_POST, {
     variables: {
       likePostId: id,
@@ -19,92 +35,87 @@ const Card = (props) => {
       // console.log(data);
     },
   });
+
+  const [textShown, setTextShown] = useState(false);
+  const [lengthMore, setLengthMore] = useState(false);
+  const toggleNumberOfLines = () => {
+    setTextShown(!textShown);
+  };
+
+  const onTextLayout = useCallback((e) => {
+    setLengthMore(e.nativeEvent.lines.length >= 4);
+  }, []);
+
   return (
-    <View style={styles.cardContainer}>
+    <View
+      style={[
+        styles.cardContainer,
+        index === posts.length - 1 ? styles.noBorder : "",
+      ]}
+    >
       <Image
         style={styles.image}
         source={{
           uri: image,
         }}
       />
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "baseline",
-          justifyContent: "space-between",
-        }}
-      >
+      <Text style={styles.author}>{author}</Text>
+      <View style={styles.cardHeader}>
         <Text style={styles.title}>{title}</Text>
-        <Text
-          style={[
-            styles.description,
-            {
-              fontSize: 14,
-              marginTop: 5,
-              color: "#18181870",
-              textAlign: "right",
-            },
-          ]}
-        >
-          {moment(createdAt).fromNow()}
-        </Text>
       </View>
-      <Text style={styles.description}>{description}</Text>
       <Text
-        style={[
-          styles.description,
-          { fontSize: 14, marginTop: 5, color: "#18181870" },
-        ]}
+        onTextLayout={onTextLayout}
+        numberOfLines={textShown ? undefined : 4}
+        style={fonts.xsmall}
       >
-        {author}
+        {description}
       </Text>
-      <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-        <View style={[styles.button, { backgroundColor: "#FFEB81" }]}>
-          <Text style={{ fontWeight: "900", color: "gray", fontSize: 18 }}>
-            Likes: {likes}
-          </Text>
-        </View>
-        <TouchableOpacity onPress={likePost} style={styles.button}>
-          <Text>👍</Text>
-        </TouchableOpacity>
-      </View>
+      {lengthMore ? (
+        <Text
+          style={[fonts.xsmall, spacing.marginVerticalSmall]}
+          onPress={toggleNumberOfLines}
+        >
+          {textShown ? "Read less" : "Read more"}
+        </Text>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: "#00000030",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.9,
-    shadowRadius: 8,
+    ...borders.borderPrimary,
+    ...card.cardContainer,
+    ...spacing.paddingVerticalSmall,
+  },
+  noBorder: {
+    borderBottomWidth: 0,
+  },
+  author: {
+    textAlign: "right",
+    paddingVertical: 5,
+    ...fonts.xxsmall,
+    ...colors.textSecondary,
+  },
+  cardHeader: {
+    ...card.cardHeader,
+    ...borders.borderSecondary,
+  },
+  cardContent: {
+    ...card.cardContent,
   },
   title: {
-    color: "#181818",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: 15,
+    ...card.title,
   },
   image: {
-    width: "100%",
-    height: 230,
-    borderRadius: 6,
+    ...card.image,
+    ...spacing.marginVerticalNormal,
   },
-  button: {
-    backgroundColor: "#000",
-    width: "45%",
-    height: 35,
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 15,
+  primaryButton: {
+    ...button.primary,
+  },
+  secondaryButton: {
+    ...button.secondary,
   },
 });
 

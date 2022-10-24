@@ -5,17 +5,17 @@ import { useNavigation } from "@react-navigation/native";
 import List from "../components/List";
 
 const Home = () => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate("Add")}>
-          <Ionicons name="add-circle-sharp" size={35} color="#181818" />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <TouchableOpacity onPress={() => navigation.navigate("Add")}>
+  //         <Ionicons name="add-circle-sharp" size={24} color="#181818" />
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // }, [navigation]);
 
   return <List />;
 };

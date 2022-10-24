@@ -1,7 +1,12 @@
-import React, { useEffect } from "react";
-import { Text, View, ScrollView, SafeAreaView } from "react-native";
+import { Text, View, ScrollView, SafeAreaView, StyleSheet } from "react-native";
 import { useQuery, gql } from "@apollo/client";
+
+// Components
 import Card from "./Card";
+
+// Styles
+import { spacing, fonts, list } from "../styles/index";
+
 const GET_POSTS = gql`
   query GetPosts {
     posts {
@@ -17,7 +22,7 @@ const GET_POSTS = gql`
 `;
 
 const List = () => {
-  const { loading, error, data, refetch } = useQuery(GET_POSTS, {
+  const { loading, error, data } = useQuery(GET_POSTS, {
     pollInterval: 1000,
   });
   if (loading) return <Text>Loading</Text>;
@@ -25,27 +30,24 @@ const List = () => {
 
   return (
     <SafeAreaView>
-      <ScrollView
-        contentContainerStyle={{
-          paddingVertical: 30,
-          backgroundColor: "#FAF5F0",
-        }}
-      >
-        <Text
-          style={{
-            color: "#00000090",
-            fontSize: 26,
-            fontWeight: "900",
-          }}
-        >
-          This are the news
-        </Text>
-        {data.posts.map((post) => {
-          return <Card key={post.id} {...post} />;
+      <ScrollView contentContainerStyle={spacing.view}>
+        <View style={styles.headerTitle}>
+          <Text style={fonts.xlarge}>This is where we tell stories</Text>
+        </View>
+        {data.posts.map((post, index) => {
+          return (
+            <Card key={post.id} {...post} index={index} posts={data.posts} />
+          );
         })}
       </ScrollView>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  headerTitle: {
+    ...list.listViewTitle,
+  },
+});
 
 export default List;
